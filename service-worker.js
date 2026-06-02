@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'feuerloescher-v7-pdf-colors-signature-2026-06-02';
+const CACHE_VERSION = 'feuerloescher-v8-local-storage-2026-06-02';
 const APP_SHELL = [
   './',
   './index.html',

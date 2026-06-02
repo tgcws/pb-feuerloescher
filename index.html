@@ -425,6 +425,11 @@
       'Löschmittel\nTausch bis', 'Prüfplakette'
     ];
 
+
+    const STORAGE_KEY = 'pb-feuerloescher-report-v1';
+    let storageRestoreInProgress = false;
+    let storageSaveTimer = null;
+
     function createSelect(options){
       const select = document.createElement('select');
       options.forEach(optionText => {
@@ -470,6 +475,7 @@
 
       tableBody.appendChild(row);
       updatePositionNumbers();
+      scheduleStorageSave();
     }
 
     function removeRow(){
@@ -478,6 +484,7 @@
         tableBody.deleteRow(tableBody.rows.length - 1);
       }
       updatePositionNumbers();
+      scheduleStorageSave();
     }
 
     function clearForm(){
@@ -497,7 +504,8 @@
       const tableBody = document.getElementById('tableBody');
       tableBody.innerHTML = '';
       addRow();
-      clearSignature();
+      clearSignature(true);
+      try{ localStorage.removeItem(STORAGE_KEY); }catch(error){}
     }
 
     function getCellValue(cell){
@@ -521,6 +529,108 @@
       return Array.from(document.querySelectorAll('#tableBody tr')).map(row => {
         return Array.from(row.cells).map(getCellValue);
       });
+    }
+
+
+    function getCellInput(cell){
+      return cell.querySelector('input[type="checkbox"], select, input, textarea');
+    }
+
+    function setCellValue(cell, value){
+      const field = getCellInput(cell);
+      if(!field) return;
+
+      if(field.type === 'checkbox'){
+        field.checked = value === true || value === 'true' || value === 'Ja';
+        return;
+      }
+
+      if(field.tagName === 'SELECT'){
+        const valueText = String(value || '');
+        const optionIndex = Array.from(field.options).findIndex(option => option.value === valueText || option.text === valueText);
+        field.selectedIndex = optionIndex >= 0 ? optionIndex : 0;
+        return;
+      }
+
+      field.value = value == null ? '' : String(value);
+    }
+
+    function getStorageSignature(){
+      const canvas = document.getElementById('signaturePad');
+      if(!canvas || isCanvasBlank(canvas)) return '';
+      try{ return canvas.toDataURL('image/png'); }catch(error){ return ''; }
+    }
+
+    function buildStoragePayload(){
+      return {
+        name: document.getElementById('nameInput')?.value || '',
+        object: document.getElementById('objectInput')?.value || '',
+        date: document.getElementById('dateInput')?.value || '',
+        rows: getTableData(),
+        signature: getStorageSignature(),
+        savedAt: new Date().toISOString()
+      };
+    }
+
+    function saveToStorageNow(){
+      if(storageRestoreInProgress) return;
+      try{
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(buildStoragePayload()));
+      }catch(error){
+        console.warn('Eingaben konnten nicht lokal gespeichert werden:', error);
+      }
+    }
+
+    function scheduleStorageSave(){
+      if(storageRestoreInProgress) return;
+      window.clearTimeout(storageSaveTimer);
+      storageSaveTimer = window.setTimeout(saveToStorageNow, 180);
+    }
+
+    function restoreSignatureFromStorage(signatureData){
+      if(!signatureData || !signaturePadState.ctx || !signaturePadState.canvas) return;
+
+      const canvas = signaturePadState.canvas;
+      const ctx = signaturePadState.ctx;
+      const rect = canvas.getBoundingClientRect();
+      const image = new Image();
+      image.onload = () => {
+        ctx.drawImage(image, 0, 0, rect.width, rect.height);
+      };
+      image.src = signatureData;
+    }
+
+    function restoreFromStorage(){
+      let saved = null;
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        saved = raw ? JSON.parse(raw) : null;
+      }catch(error){
+        console.warn('Gespeicherte Eingaben konnten nicht geladen werden:', error);
+      }
+
+      storageRestoreInProgress = true;
+
+      document.getElementById('nameInput').value = saved?.name || '';
+      document.getElementById('objectInput').value = saved?.object || '';
+      document.getElementById('dateInput').value = saved?.date || '';
+
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = '';
+      const rows = Array.isArray(saved?.rows) && saved.rows.length ? saved.rows : [[]];
+      rows.forEach(rowValues => {
+        addRow();
+        const row = tableBody.rows[tableBody.rows.length - 1];
+        Array.from(row.cells).forEach((cell, index) => {
+          setCellValue(cell, rowValues[index]);
+        });
+      });
+      updatePositionNumbers();
+
+      storageRestoreInProgress = false;
+      if(saved?.signature){
+        window.setTimeout(() => restoreSignatureFromStorage(saved.signature), 80);
+      }
     }
 
     function formatDateForFile(dateValue){
@@ -877,9 +987,10 @@
       if(canvas && canvas.releasePointerCapture && event && event.pointerId){
         try{ canvas.releasePointerCapture(event.pointerId); }catch(error){}
       }
+      scheduleStorageSave();
     }
 
-    function clearSignature(){
+    function clearSignature(skipStorageSave = false){
       const canvas = signaturePadState.canvas || document.getElementById('signaturePad');
       if(!canvas) return;
 
@@ -888,6 +999,7 @@
       ctx.setTransform(1, 0, 0, 1, 0, 0);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.restore();
+      if(!skipStorageSave) scheduleStorageSave();
     }
 
     function isCanvasBlank(canvas){
@@ -939,8 +1051,12 @@
     }
 
     window.addEventListener('load', () => {
-      addRow();
       initSignature();
+      restoreFromStorage();
+
+      document.addEventListener('input', scheduleStorageSave, true);
+      document.addEventListener('change', scheduleStorageSave, true);
+
       registerServiceWorker();
     });
 
