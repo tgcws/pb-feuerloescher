@@ -468,12 +468,6 @@ input[type="checkbox"]{
 <script>
 let reports=JSON.parse(localStorage.getItem('reports')||'[]');
 
-function exportPDF(){
- const obj=document.querySelector('input[placeholder="Objekt eingeben"]')?.value||'Objekt';
- const date=document.querySelector('input[type="date"]')?.value||new Date().toISOString().split('T')[0];
- html2pdf().set({filename:`${obj}_${date}_Pruefbericht.pdf`}).from(document.querySelector('.container')).save();
-}
-
 function saveReport(){
  const data=document.documentElement.outerHTML;
  const name=(document.querySelector('input[placeholder="Objekt eingeben"]')?.value||'Objekt')+'_'+Date.now();
