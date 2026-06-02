@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prüfbericht Feuerlöscher</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#d6001c">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+#signaturePad{border:2px solid #ccc;width:100%;max-width:500px;height:180px;touch-action:none;background:#fff;}
+</style>
+
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      margin:20px;
+      background:#f4f4f4;
+      color:#222;
+    }
+
+    .container{
+      background:#fff;
+      padding:20px;
+      border-radius:10px;
+      box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1{
+      text-align:left;
+      margin-bottom:20px;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:20px;
+      margin-bottom:25px;
+      flex-wrap:wrap;
+    }
+
+    
+    .title-bar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+
+    .logo{
+      max-height:80px;
+      width:auto;
+    }
+
+
+    .header-left{
+      flex:1;
+      min-width:250px;
+    }
+
+    .header-row{
+      display:flex;
+      gap:15px;
+      margin-bottom:10px;
+      flex-wrap:wrap;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      flex:1;
+      min-width:150px;
+    }
+
+    label{
+      font-size:18px;
+      font-weight:bold;
+      margin-bottom:5px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea,
+    select{
+      border:none;
+      border-radius:8px;
+      font-size:18px;
+      box-sizing:border-box;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    textarea{
+      padding:8px;
+    }
+
+    /* Dropdowns */
+    select{
+      padding:5px 10px;
+      min-width:90px;
+      height:36px;
+      font-size:14px;  
+	  font-weight:bold;
+
+    }
+
+    .table-wrapper{
+      overflow-x:auto;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:25px;
+      min-width:1750px;
+    }
+
+    th, td{
+      border:2px solid #FFFFFF;
+	  border-radius:5px;
+      background:#F5F5F5;
+      padding:15px;
+      text-align:center;
+      vertical-align:middle;
+    }
+
+    th{
+      background:#d6001c;
+      color:white;
+      font-size:15px;
+      white-space:normal;
+    }
+
+    td input[type="text"]{
+      width:100%;
+      padding:10px;
+	  font-size:14px;	  
+	  font-weight:bold;
+    }
+
+    /* POS Feld */
+    .pos-field{
+      width:35px !important;
+      text-align:center;
+      font-weight:bold;
+    }
+
+    /* Baujahr Feld */
+    .baujahr-field{
+      width:80px !important;
+      text-align:center;
+      font-weight:bold;
+    }
+	
+    /* Löschmittel Feld */
+    .loeschmittel-field{
+      width:100px !important;
+      text-align:center;
+      font-weight:bold;
+    }
+	
+    /* Standortfeld */
+    .standort-field{
+      min-width:290px;
+      resize:horizontal;
+      overflow:auto;
+    }
+	
+    /* Typ Feld */
+    .type-field{
+      width:85px !important;
+      text-align:center;
+      font-weight:bold;
+    }
+
+    .checkbox-center{
+      text-align:center;
+    }
+
+    .actions{
+      margin-top:20px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      background:#d6001c;
+      color:white;
+      border:none;
+      padding:16px 14px;
+      border-radius:23px;
+      cursor:pointer;
+      font-size:15px;
+      font-weight:bold;
+    }
+
+    button:hover{
+      background:#a80016;
+    }
+
+    .signature{
+      margin-top:90px;
+	  font-size:16px;
+      font-weight:bold;
+    }
+
+    @page{
+      size: landscape;
+      margin: 0;
+    }
+	
+	@media print {
+	    html, body {
+			margin: 0 !important;
+			padding: 0 !important;
+        }
+
+	 *{
+	   -webkit-print-color-adjust: exact !important;
+	   print-color-adjust: exact !important;
+	   color-adjust: exact !important;
+     }
+
+	 th{
+      background: #d6001c !important;
+      color: #ffffff !important;
+     }
+
+     td{
+      background: #F5F5F5 !important;
+     }
+
+     button{
+      display:none;
+     }
+
+     body{
+      background:white;
+     }
+
+     .container{
+      box-shadow:none;
+     }
+    }
+  
+input[type="checkbox"]{
+  -webkit-appearance: checkbox !important;
+  appearance: checkbox !important;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="title-bar">
+    <h1>Prüfbericht Feuerlöscher</h1>
+    <img class="logo" src="data:image/webp;base64,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" alt="CWS Fire Safety Logo">
+  </div>
+
+  <div class="header-left">
+
+    <div class="header-left">
+
+      <div class="header-row">
+        <div class="field">
+          <label>Objekt</label>
+          <input type="text" placeholder="Objekt eingeben">
+        </div>
+
+        <div class="field">
+          <label>Datum</label>
+          <input type="date">
+        </div>
+      </div>
+
+      <div class="header-row">
+        <div class="field">
+          <label>Name</label>
+          <input type="text" placeholder="Name eingeben">
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="table-wrapper">
+
+    <table id="reportTable">
+
+      <thead>
+        <tr>
+          <th>Pos.</th>
+          <th>Standort</th>
+          <th>Typ</th>
+          <th>Baujahr</th>
+
+          <th>Außeninspektion</th>
+
+          <th>Innenkontrolle</th>
+
+          <th>BetrSichV<br>Kategorie I-II</th>
+
+          <th>Schlauchprüfung</th>
+
+          <th>Reinigung</th>
+
+          <th>Druck-/Dichtheit</th>
+
+          <th>Löschmittel<br>Tausch bis</th>
+
+          <th>Prüfplakette</th>
+        </tr>
+      </thead>
+
+      <tbody id="tableBody">
+      </tbody>
+
+    </table>
+
+  </div>
+
+  <div class="actions">
+    <button onclick="addRow()">Zeile hinzufügen</button>
+    <button onclick="removeRow()">Letzte Zeile entfernen</button>
+    <button onclick="printReport()">Drucken</button>
+  </div>
+
+  
+<div style="margin-top:30px">
+<h3>Digitale Unterschrift</h3>
+<canvas id="signaturePad" width="500" height="180"></canvas><br>
+<button onclick="clearSignature()">Unterschrift löschen</button>
+</div>
+<div class="signature">
+    <label>Unterschrift</label>
+  </div>
+
+</div>
+
+<script>
+
+  function createSelect(options) {
+
+    let select = document.createElement("select");
+
+    options.forEach(optionText => {
+      let option = document.createElement("option");
+      option.text = optionText;
+      select.add(option);
+    });
+
+    return select;
+  }
+
+  function updatePositionNumbers() {
+
+    const rows = document.querySelectorAll("#tableBody tr");
+
+    rows.forEach((row, index) => {
+      row.querySelector(".pos-field").value = index + 1;
+    });
+  }
+
+  function addRow() {
+
+    const tableBody = document.getElementById("tableBody");
+
+    let row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>
+        <input type="text" class="pos-field" readonly>
+      </td>
+
+      <td>
+        <input type="text"
+               class="standort-field"
+               placeholder="Standort eingeben">
+      </td>
+
+      <td>
+        <input type="text"
+			   class="type-field">
+      </td>
+
+      <td>
+        <input type="text"
+			   class="baujahr-field">
+      </td>
+
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+
+      <td class="checkbox-center">
+        <input type="checkbox">
+      </td>
+
+      <td></td>
+      <td>
+        <input type="text"
+			   class="loeschmittel-field"	
+	  </td>
+
+      <td class="checkbox-center">
+        <input type="checkbox">
+      </td>
+    `;
+
+    row.cells[4].appendChild(
+      createSelect(["I.O", "n.i.O"])
+    );
+
+    row.cells[5].appendChild(
+      createSelect(["I.O", "n.i.O", "n.n"])
+    );
+
+    row.cells[6].appendChild(
+      createSelect(["I.O", "n.i.O"])
+    );
+
+    row.cells[7].appendChild(
+      createSelect(["I.O", "n.i.O", "n.n"])
+    );
+
+    row.cells[9].appendChild(
+      createSelect(["I.O", "n.i.O", "n.n"])
+    );
+
+    tableBody.appendChild(row);
+
+    updatePositionNumbers();
+  }
+
+  function removeRow() {
+
+    const tableBody = document.getElementById("tableBody");
+
+    if (tableBody.rows.length > 1) {
+      tableBody.deleteRow(tableBody.rows.length - 1);
+    }
+
+    updatePositionNumbers();
+  }
+
+  function printReport() {
+    window.print();
+  }
+
+  // Erste Zeile automatisch erzeugen
+  addRow();
+
+
+</script>
+
+<div class="actions"><button onclick="saveReport()">Bericht speichern</button><button onclick="exportPDF()">PDF archivieren</button></div>
+<script>
+let reports=JSON.parse(localStorage.getItem('reports')||'[]');
+
+function exportPDF(){
+ const obj=document.querySelector('input[placeholder="Objekt eingeben"]')?.value||'Objekt';
+ const date=document.querySelector('input[type="date"]')?.value||new Date().toISOString().split('T')[0];
+ html2pdf().set({filename:`${obj}_${date}_Pruefbericht.pdf`}).from(document.querySelector('.container')).save();
+}
+
+function saveReport(){
+ const data=document.documentElement.outerHTML;
+ const name=(document.querySelector('input[placeholder="Objekt eingeben"]')?.value||'Objekt')+'_'+Date.now();
+ reports.push({name,data,date:new Date().toISOString()});
+ localStorage.setItem('reports',JSON.stringify(reports));
+ alert('Bericht gespeichert');
+}
+
+function initSignature(){
+ const c=document.getElementById('signaturePad');
+ if(!c) return;
+ const ctx=c.getContext('2d');
+ let draw=false;
+ function pos(e){
+  const r=c.getBoundingClientRect();
+  const t=e.touches?e.touches[0]:e;
+  return {x:t.clientX-r.left,y:t.clientY-r.top};
+ }
+ ['pointerdown'].forEach(ev=>c.addEventListener(ev,e=>{draw=true;let p=pos(e);ctx.moveTo(p.x,p.y);}));
+ ['pointermove'].forEach(ev=>c.addEventListener(ev,e=>{if(!draw)return;let p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();}));
+ window.addEventListener('pointerup',()=>draw=false);
+}
+function clearSignature(){
+ const c=document.getElementById('signaturePad');
+ c.getContext('2d').clearRect(0,0,c.width,c.height);
+}
+
+if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js');}
+window.addEventListener('load',initSignature);
+</script>
+</body>
+</html>
