@@ -8,7 +8,20 @@
 <meta name="theme-color" content="#d6001c">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-#signaturePad{border:2px solid #ccc;width:100%;max-width:500px;height:180px;touch-action:none;background:#fff;}
+#signaturePad{
+  border:2px solid #ccc;
+  border-radius:8px;
+  width:100%;
+  max-width:500px;
+  height:180px;
+  touch-action:none;
+  background:#fff;
+  display:block;
+  box-sizing:border-box;
+}
+.signature-actions{
+  margin-top:10px;
+}
 </style>
 
 
@@ -48,13 +61,6 @@
       align-items:center;
       margin-bottom:20px;
     }
-
-    .logo{
-      max-height:80px;
-      width:auto;
-    }
-
-
     .header-left{
       flex:1;
       min-width:250px;
@@ -257,7 +263,6 @@ input[type="checkbox"]{
 
   <div class="title-bar">
     <h1>Prüfbericht Feuerlöscher</h1>
-    <img class="logo" src="data:image/webp;base64,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" alt="CWS Fire Safety Logo">
   </div>
 
   <div class="header-left">
@@ -331,9 +336,11 @@ input[type="checkbox"]{
 
   
 <div style="margin-top:30px">
-<h3>Digitale Unterschrift</h3>
-<canvas id="signaturePad" width="500" height="180"></canvas><br>
-<button onclick="clearSignature()">Unterschrift löschen</button>
+  <h3>Digitale Unterschrift</h3>
+  <canvas id="signaturePad" aria-label="Digitale Unterschrift"></canvas>
+  <div class="signature-actions">
+    <button type="button" onclick="clearSignature()">Unterschrift löschen</button>
+  </div>
 </div>
 
 <script>
@@ -399,8 +406,8 @@ input[type="checkbox"]{
       <td></td>
       <td>
         <input type="text"
-			   class="loeschmittel-field"	
-	  </td>
+               class="loeschmittel-field">
+      </td>
 
       <td class="checkbox-center">
         <input type="checkbox">
@@ -455,23 +462,103 @@ input[type="checkbox"]{
 <script>
 let reports=JSON.parse(localStorage.getItem('reports')||'[]');
 
-function initSignature(){
- const c=document.getElementById('signaturePad');
- if(!c) return;
- const ctx=c.getContext('2d');
- let draw=false;
- function pos(e){
-  const r=c.getBoundingClientRect();
-  const t=e.touches?e.touches[0]:e;
-  return {x:t.clientX-r.left,y:t.clientY-r.top};
- }
- ['pointerdown'].forEach(ev=>c.addEventListener(ev,e=>{draw=true;let p=pos(e);ctx.moveTo(p.x,p.y);}));
- ['pointermove'].forEach(ev=>c.addEventListener(ev,e=>{if(!draw)return;let p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();}));
- window.addEventListener('pointerup',()=>draw=false);
+let signaturePadState = {
+  canvas: null,
+  ctx: null,
+  isDrawing: false,
+  lastPoint: null
+};
+
+function setupSignatureCanvas(){
+  const canvas = document.getElementById('signaturePad');
+  if(!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  const rect = canvas.getBoundingClientRect();
+  const ratio = Math.max(window.devicePixelRatio || 1, 1);
+
+  canvas.width = Math.round(rect.width * ratio);
+  canvas.height = Math.round(rect.height * ratio);
+
+  ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+  ctx.lineWidth = 2.4;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#222';
+
+  signaturePadState.canvas = canvas;
+  signaturePadState.ctx = ctx;
 }
+
+function getSignaturePoint(event){
+  const canvas = signaturePadState.canvas;
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: event.clientX - rect.left,
+    y: event.clientY - rect.top
+  };
+}
+
+function startSignature(event){
+  event.preventDefault();
+  const canvas = signaturePadState.canvas;
+  if(!canvas || !signaturePadState.ctx) return;
+
+  signaturePadState.isDrawing = true;
+  signaturePadState.lastPoint = getSignaturePoint(event);
+
+  if(canvas.setPointerCapture){
+    canvas.setPointerCapture(event.pointerId);
+  }
+}
+
+function drawSignature(event){
+  if(!signaturePadState.isDrawing || !signaturePadState.ctx) return;
+  event.preventDefault();
+
+  const ctx = signaturePadState.ctx;
+  const currentPoint = getSignaturePoint(event);
+  const lastPoint = signaturePadState.lastPoint || currentPoint;
+
+  ctx.beginPath();
+  ctx.moveTo(lastPoint.x, lastPoint.y);
+  ctx.lineTo(currentPoint.x, currentPoint.y);
+  ctx.stroke();
+
+  signaturePadState.lastPoint = currentPoint;
+}
+
+function stopSignature(event){
+  if(!signaturePadState.isDrawing) return;
+  signaturePadState.isDrawing = false;
+  signaturePadState.lastPoint = null;
+
+  const canvas = signaturePadState.canvas;
+  if(canvas && canvas.releasePointerCapture && event && event.pointerId){
+    try{
+      canvas.releasePointerCapture(event.pointerId);
+    }catch(error){}
+  }
+}
+
+function initSignature(){
+  setupSignatureCanvas();
+  const canvas = signaturePadState.canvas;
+  if(!canvas) return;
+
+  canvas.addEventListener('pointerdown', startSignature);
+  canvas.addEventListener('pointermove', drawSignature);
+  canvas.addEventListener('pointerup', stopSignature);
+  canvas.addEventListener('pointercancel', stopSignature);
+  canvas.addEventListener('pointerleave', stopSignature);
+}
+
 function clearSignature(){
- const c=document.getElementById('signaturePad');
- c.getContext('2d').clearRect(0,0,c.width,c.height);
+  const canvas = signaturePadState.canvas || document.getElementById('signaturePad');
+  if(!canvas) return;
+
+  const ctx = signaturePadState.ctx || canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 if('serviceWorker' in navigator){navigator.serviceWorker.register('service-worker.js');}
