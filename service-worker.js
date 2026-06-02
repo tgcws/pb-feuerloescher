@@ -1,12 +1,10 @@
-const CACHE_VERSION = 'feuerloescher-v2-2026-06-02';
+const CACHE_VERSION = 'feuerloescher-v7-pdf-colors-signature-2026-06-02';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icon-512.png'
 ];
 
 self.addEventListener('install', event => {
