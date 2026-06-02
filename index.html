@@ -450,6 +450,20 @@ input[type="checkbox"]{
   // Erste Zeile automatisch erzeugen
   addRow();
 
+</script>
+
+<div class="actions"><button onclick="saveReport()">Bericht speichern</button>
+<script>
+let reports=JSON.parse(localStorage.getItem('reports')||'[]');
+	
+}
+
+function saveReport(){
+ const data=document.documentElement.outerHTML;
+ const name=(document.querySelector('input[placeholder="Objekt eingeben"]')?.value||'Objekt')+'_'+Date.now();
+ reports.push({name,data,date:new Date().toISOString()});
+ localStorage.setItem('reports',JSON.stringify(reports));
+ alert('Bericht gespeichert');
 }
 
 function initSignature(){
