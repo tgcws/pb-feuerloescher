@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'feuerloescher-v8-local-storage-2026-06-02';
+const CACHE_VERSION = 'feuerloescher-v9-input-focus-fix-2026-06-03';
 const APP_SHELL = [
   './',
   './index.html',

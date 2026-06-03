@@ -522,10 +522,6 @@
     }
 
     function getTableData(){
-      if(document.activeElement && typeof document.activeElement.blur === 'function'){
-        document.activeElement.blur();
-      }
-
       return Array.from(document.querySelectorAll('#tableBody tr')).map(row => {
         return Array.from(row.cells).map(getCellValue);
       });
