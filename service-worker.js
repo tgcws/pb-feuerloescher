@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'feuerloescher-v14-option4-2026-06-05';
+const CACHE_VERSION = 'feuerloescher-v15-archive-2026-06-05';
 const APP_SHELL = [
   './',
   './index.html',

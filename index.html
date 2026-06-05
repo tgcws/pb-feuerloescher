@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Prüfbericht Feuerlöscher</title>
+  <meta name="app-version" content="15" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#d6001c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -60,6 +61,20 @@
       align-items:center;
       gap:12px;
       margin-bottom:16px;
+    }
+
+    .title-actions{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      gap:10px;
+      padding:12px;
+      background:rgba(255,255,255,.72);
+      border:1px solid rgba(60,60,67,.16);
+      border-radius:var(--radius);
+      box-shadow:0 8px 24px rgba(0,0,0,.06);
+      -webkit-backdrop-filter:blur(18px);
+      backdrop-filter:blur(18px);
     }
 
     h1{
@@ -262,6 +277,18 @@
       box-shadow:0 8px 18px rgba(52,199,89,0.22);
     }
 
+    button.archive-save{
+      background:#ff9500;
+      color:#ffffff;
+      box-shadow:0 8px 18px rgba(255,149,0,0.22);
+    }
+
+    button.archive-open{
+      background:#0a84ff;
+      color:#ffffff;
+      box-shadow:0 8px 18px rgba(10,132,255,0.22);
+    }
+
     button.secondary:hover,
     button.danger:hover,
     button.success:hover{
@@ -294,9 +321,115 @@
       margin-top:8px;
     }
 
+    .archive-status{
+      min-height:18px;
+      margin:12px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      line-height:1.3;
+    }
+
+    .archive-overlay[hidden]{
+      display:none;
+    }
+
+    .archive-overlay{
+      position:fixed;
+      inset:0;
+      z-index:20;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background:rgba(28,28,30,.34);
+      -webkit-backdrop-filter:blur(10px);
+      backdrop-filter:blur(10px);
+    }
+
+    .archive-dialog{
+      width:min(100%, 720px);
+      max-height:min(680px, 92vh);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      background:#ffffff;
+      border:1px solid rgba(60,60,67,.16);
+      border-radius:var(--radius);
+      box-shadow:0 18px 50px rgba(0,0,0,.18);
+    }
+
+    .archive-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:16px 18px;
+      border-bottom:1px solid rgba(60,60,67,.12);
+    }
+
+    .archive-header h2{
+      margin:0;
+      font-size:22px;
+      line-height:1.15;
+      font-weight:800;
+    }
+
+    .archive-list{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      padding:12px;
+      overflow:auto;
+    }
+
+    .archive-empty{
+      margin:0;
+      padding:24px 12px;
+      color:var(--muted);
+      text-align:center;
+      font-weight:700;
+    }
+
+    .archive-item{
+      display:grid;
+      grid-template-columns:1fr auto auto;
+      gap:8px;
+      align-items:center;
+      padding:12px;
+      background:#f7f7fb;
+      border:1px solid rgba(60,60,67,.12);
+      border-radius:14px;
+    }
+
+    .archive-title{
+      min-width:0;
+      font-weight:800;
+      line-height:1.25;
+      overflow-wrap:anywhere;
+    }
+
+    .archive-meta{
+      margin-top:3px;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:700;
+      line-height:1.25;
+    }
+
+    .archive-item button,
+    .archive-close-btn{
+      min-height:38px;
+      padding:8px 13px;
+      font-size:13px;
+      box-shadow:none;
+    }
+
     @media (max-width: 900px){
       body{padding:12px;}
       .container{padding:14px;border-radius:14px;}
+      .title-bar{align-items:stretch;flex-direction:column;}
+      .title-actions{justify-content:stretch;}
       .header-row{grid-template-columns:1fr 1fr;gap:10px;}
       .field.full-mobile{grid-column:1 / -1;}
       table{min-width:1180px;}
@@ -304,6 +437,7 @@
       button{width:100%;}
       .actions,.signature-actions{display:grid;grid-template-columns:1fr 1fr;}
       .actions button:nth-child(3),.actions button:nth-child(4){grid-column:auto;}
+      .archive-item{grid-template-columns:1fr;}
     }
 
     @media (max-width: 520px){
@@ -330,7 +464,9 @@
       }
 
       .actions,
+      .title-actions,
       .signature-actions,
+      .archive-status,
       .hint{
         display:none !important;
       }
@@ -387,6 +523,10 @@
   <div class="container" id="reportRoot">
     <div class="title-bar">
       <h1>Prüfbericht Feuerlöscher</h1>
+      <div class="title-actions" aria-label="Archivaktionen">
+        <button type="button" onclick="saveCurrentReportToArchive()" class="archive-save">Im Archiv speichern</button>
+        <button type="button" onclick="openArchive()" class="archive-open">Archiv</button>
+      </div>
     </div>
 
     <div class="header-left">
@@ -459,6 +599,17 @@
       </div>
       <div class="hint">Tipp: Auf dem iPad mit Finger oder Apple Pencil unterschreiben.</div>
     </div>
+    <p class="archive-status" id="archiveStatus" role="status" aria-live="polite"></p>
+  </div>
+
+  <div class="archive-overlay" id="archiveOverlay" hidden>
+    <div class="archive-dialog" role="dialog" aria-modal="true" aria-labelledby="archiveTitle">
+      <div class="archive-header">
+        <h2 id="archiveTitle">Archiv</h2>
+        <button type="button" onclick="closeArchive()" class="secondary archive-close-btn" aria-label="Archiv schließen">Schließen</button>
+      </div>
+      <div class="archive-list" id="archiveList" aria-live="polite"></div>
+    </div>
   </div>
 
   <script>
@@ -470,8 +621,11 @@
 
 
     const STORAGE_KEY = 'pb-feuerloescher-report-v1';
+    const ARCHIVE_STORAGE_KEY = 'pb-feuerloescher-report-archive-v1';
+    const CURRENT_ARCHIVE_ID_KEY = 'pb-feuerloescher-current-archive-id';
     let storageRestoreInProgress = false;
     let storageSaveTimer = null;
+    let archiveStatusTimer = null;
 
     function createSelect(options){
       const select = document.createElement('select');
@@ -549,6 +703,8 @@
       addRow();
       clearSignature(true);
       try{ localStorage.removeItem(STORAGE_KEY); }catch(error){}
+      clearCurrentArchiveId();
+      setArchiveStatus('Aktueller Prüfbericht wurde geleert. Archivierte Prüfberichte bleiben erhalten.');
     }
 
     function getCellValue(cell){
@@ -639,15 +795,7 @@
       image.src = signatureData;
     }
 
-    function restoreFromStorage(){
-      let saved = null;
-      try{
-        const raw = localStorage.getItem(STORAGE_KEY);
-        saved = raw ? JSON.parse(raw) : null;
-      }catch(error){
-        console.warn('Gespeicherte Eingaben konnten nicht geladen werden:', error);
-      }
-
+    function applyStoragePayload(saved){
       storageRestoreInProgress = true;
 
       document.getElementById('nameInput').value = saved?.name || '';
@@ -669,6 +817,220 @@
       storageRestoreInProgress = false;
       if(saved?.signature){
         window.setTimeout(() => restoreSignatureFromStorage(saved.signature), 80);
+      }
+    }
+
+    function restoreFromStorage(){
+      let saved = null;
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        saved = raw ? JSON.parse(raw) : null;
+      }catch(error){
+        console.warn('Gespeicherte Eingaben konnten nicht geladen werden:', error);
+      }
+
+      applyStoragePayload(saved);
+    }
+
+    function readStoredValue(key){
+      try{ return localStorage.getItem(key); }
+      catch(error){
+        console.warn('Lokaler Speicher konnte nicht gelesen werden:', error);
+        return null;
+      }
+    }
+
+    function writeStoredValue(key, value){
+      try{
+        localStorage.setItem(key, value);
+        return true;
+      }catch(error){
+        console.warn('Lokaler Speicher konnte nicht beschrieben werden:', error);
+        return false;
+      }
+    }
+
+    function removeStoredValue(key){
+      try{ localStorage.removeItem(key); }
+      catch(error){
+        console.warn('Lokaler Speicher konnte nicht geleert werden:', error);
+      }
+    }
+
+    function createArchiveId(){
+      if(window.crypto && window.crypto.randomUUID){
+        return window.crypto.randomUUID();
+      }
+      return `archive-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    }
+
+    function getCurrentArchiveId(){
+      return readStoredValue(CURRENT_ARCHIVE_ID_KEY);
+    }
+
+    function setCurrentArchiveId(id){
+      if(id){
+        writeStoredValue(CURRENT_ARCHIVE_ID_KEY, id);
+      }else{
+        clearCurrentArchiveId();
+      }
+    }
+
+    function clearCurrentArchiveId(){
+      removeStoredValue(CURRENT_ARCHIVE_ID_KEY);
+    }
+
+    function loadArchiveEntries(){
+      try{
+        const entries = JSON.parse(readStoredValue(ARCHIVE_STORAGE_KEY) || '[]');
+        return Array.isArray(entries) ? entries : [];
+      }catch(error){
+        console.warn('Archiv konnte nicht gelesen werden:', error);
+        return [];
+      }
+    }
+
+    function writeArchiveEntries(entries){
+      return writeStoredValue(ARCHIVE_STORAGE_KEY, JSON.stringify(entries));
+    }
+
+    function getDisplayDate(value){
+      return value ? formatDateForFile(value) : 'Ohne Datum';
+    }
+
+    function getArchiveTitle(entry){
+      const report = entry && entry.report ? entry.report : {};
+      const name = String(report.name || '').trim() || 'Ohne Name';
+      const object = String(report.object || '').trim() || 'Ohne Objekt';
+      return `${name} - ${object} - ${getDisplayDate(report.date)}`;
+    }
+
+    function saveCurrentReportToArchive(){
+      saveToStorageNow();
+
+      const now = new Date().toISOString();
+      const currentId = getCurrentArchiveId();
+      const entries = loadArchiveEntries();
+      const existingIndex = currentId ? entries.findIndex(entry => entry.id === currentId) : -1;
+      const entry = {
+        id: existingIndex >= 0 ? entries[existingIndex].id : createArchiveId(),
+        createdAt: existingIndex >= 0 ? entries[existingIndex].createdAt : now,
+        updatedAt: now,
+        report: buildStoragePayload()
+      };
+
+      if(existingIndex >= 0){
+        entries[existingIndex] = entry;
+      }else{
+        entries.push(entry);
+      }
+
+      if(writeArchiveEntries(entries)){
+        setCurrentArchiveId(entry.id);
+        renderArchiveList();
+        setArchiveStatus('Prüfbericht wurde im Archiv gespeichert.');
+      }else{
+        setArchiveStatus('Prüfbericht konnte nicht im Archiv gespeichert werden.');
+      }
+    }
+
+    function openArchiveEntry(id){
+      const entry = loadArchiveEntries().find(item => item.id === id);
+      if(!entry) return;
+
+      clearSignature(true);
+      applyStoragePayload(entry.report);
+      setCurrentArchiveId(entry.id);
+      saveToStorageNow();
+      closeArchive();
+      setArchiveStatus('Prüfbericht aus dem Archiv geöffnet.');
+    }
+
+    function deleteArchiveEntry(id){
+      const entries = loadArchiveEntries();
+      const entry = entries.find(item => item.id === id);
+      if(!entry) return;
+
+      if(!confirm(`Archiv-Eintrag "${getArchiveTitle(entry)}" löschen?`)) return;
+
+      writeArchiveEntries(entries.filter(item => item.id !== id));
+      if(getCurrentArchiveId() === id){
+        clearCurrentArchiveId();
+      }
+      renderArchiveList();
+      setArchiveStatus('Archiv-Eintrag wurde gelöscht.');
+    }
+
+    function renderArchiveList(){
+      const archiveList = document.getElementById('archiveList');
+      const entries = loadArchiveEntries()
+        .slice()
+        .sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+
+      archiveList.innerHTML = '';
+
+      if(!entries.length){
+        const empty = document.createElement('p');
+        empty.className = 'archive-empty';
+        empty.textContent = 'Noch keine gespeicherten Prüfberichte im Archiv.';
+        archiveList.appendChild(empty);
+        return;
+      }
+
+      entries.forEach(entry => {
+        const item = document.createElement('article');
+        item.className = 'archive-item';
+
+        const text = document.createElement('div');
+        const title = document.createElement('div');
+        const meta = document.createElement('div');
+        title.className = 'archive-title';
+        meta.className = 'archive-meta';
+        title.textContent = getArchiveTitle(entry);
+        meta.textContent = `Geändert: ${getDisplayDate((entry.updatedAt || '').slice(0, 10))}`;
+
+        text.appendChild(title);
+        text.appendChild(meta);
+
+        const openButton = document.createElement('button');
+        openButton.type = 'button';
+        openButton.className = 'archive-open';
+        openButton.textContent = 'Öffnen';
+        openButton.addEventListener('click', () => openArchiveEntry(entry.id));
+
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'danger';
+        deleteButton.textContent = 'Löschen';
+        deleteButton.addEventListener('click', () => deleteArchiveEntry(entry.id));
+
+        item.appendChild(text);
+        item.appendChild(openButton);
+        item.appendChild(deleteButton);
+        archiveList.appendChild(item);
+      });
+    }
+
+    function openArchive(){
+      renderArchiveList();
+      document.getElementById('archiveOverlay').hidden = false;
+    }
+
+    function closeArchive(){
+      document.getElementById('archiveOverlay').hidden = true;
+    }
+
+    function setArchiveStatus(message){
+      const status = document.getElementById('archiveStatus');
+      if(!status) return;
+
+      status.textContent = message || '';
+      window.clearTimeout(archiveStatusTimer);
+
+      if(message){
+        archiveStatusTimer = window.setTimeout(() => {
+          status.textContent = '';
+        }, 4000);
       }
     }
 
@@ -1073,7 +1435,7 @@
         window.location.reload();
       });
 
-      navigator.serviceWorker.register('./service-worker.js?v=2026.06.05-05').then(registration => {
+      navigator.serviceWorker.register('./service-worker.js?v=2026.06.05-archive').then(registration => {
         registration.update();
 
         registration.addEventListener('updatefound', () => {
@@ -1097,6 +1459,16 @@
 
       document.addEventListener('input', scheduleStorageSave, true);
       document.addEventListener('change', scheduleStorageSave, true);
+      document.getElementById('archiveOverlay').addEventListener('click', event => {
+        if(event.target === event.currentTarget){
+          closeArchive();
+        }
+      });
+      document.addEventListener('keydown', event => {
+        if(event.key === 'Escape' && !document.getElementById('archiveOverlay').hidden){
+          closeArchive();
+        }
+      });
 
       registerServiceWorker();
     });
