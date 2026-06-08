@@ -4,14 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Prüfbericht Feuerlöscher</title>
-  <meta name="app-version" content="15" />
+  <meta name="app-version" content="19" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#d6001c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Feuerlöscher" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <link rel="apple-touch-icon" href="../../icons/icon-192.png" />
 
   <style>
     :root{
@@ -178,6 +177,7 @@
     #reportTable col.col-pos{width:58px;}
     #reportTable col.col-standort{width:260px;}
     #reportTable col.col-typ{width:90px;}
+    #reportTable col.col-hersteller{width:110px;}
     #reportTable col.col-baujahr{width:85px;}
     #reportTable col.col-status{width:118px;}
     #reportTable col.col-kurz{width:94px;}
@@ -193,6 +193,7 @@
     .col-pos{width:58px;}
     .col-standort{width:260px;}
     .col-typ{width:90px;}
+    .col-hersteller{width:110px;}
     .col-baujahr{width:85px;}
     .col-status{width:118px;}
     .col-kurz{width:94px;}
@@ -209,6 +210,7 @@
     }
 
     .type-field,
+    .hersteller-field,
     .baujahr-field,
     .loeschmittel-field{
       text-align:center;
@@ -516,6 +518,484 @@
         font-size:9px !important;
       }
     }
+  
+
+    /* FSMobile iOS UI refresh */
+    :root {
+      --ios-blue: #007aff;
+      --ios-blue-pressed: #005ecb;
+      --ios-red: #ff3b30;
+      --ios-red-pressed: #d70015;
+      --ios-green: #34c759;
+      --ios-green-pressed: #248a3d;
+      --ios-neutral: #8e8e93;
+      --ios-neutral-pressed: #6e6e73;
+      --ios-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    h1 {
+      font-size: 34px !important;
+      letter-spacing: 0 !important;
+    }
+
+    h2,
+    h3,
+    label,
+    .subtitle,
+    .module-card h2,
+    .archive-title,
+    .archive-meta {
+      letter-spacing: 0 !important;
+    }
+
+    button,
+    .button,
+    a.button,
+    .btn-primary,
+    .btn-archive,
+    .btn-archive-save {
+      border-radius: 13px !important;
+      color: #ffffff;
+      background: linear-gradient(180deg, #1688ff 0%, var(--ios-blue) 100%) !important;
+      box-shadow: 0 10px 20px rgba(0, 122, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+      transition: transform 0.18s var(--ios-ease), box-shadow 0.18s var(--ios-ease), background 0.18s var(--ios-ease), filter 0.18s var(--ios-ease) !important;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button:hover,
+    .button:hover,
+    a.button:hover,
+    .btn-primary:hover,
+    .btn-archive:hover,
+    .btn-archive-save:hover {
+      filter: brightness(1.02) !important;
+      box-shadow: 0 12px 24px rgba(0, 122, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
+    }
+
+    button:active,
+    .button:active,
+    a.button:active,
+    .btn-primary:active,
+    .btn-archive:active,
+    .btn-archive-save:active {
+      transform: scale(0.975) !important;
+      background: linear-gradient(180deg, var(--ios-blue) 0%, var(--ios-blue-pressed) 100%) !important;
+      box-shadow: 0 5px 12px rgba(0, 122, 255, 0.22), inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    button:focus-visible,
+    .button:focus-visible,
+    a.button:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.28) !important;
+      outline-offset: 3px !important;
+    }
+
+    button:disabled,
+    .button:disabled {
+      opacity: 0.55 !important;
+      cursor: default !important;
+      transform: none !important;
+    }
+
+    .clear-btn,
+    .btn-secondary,
+    button.secondary,
+    button[data-action="secondary"] {
+      background: linear-gradient(180deg, #a6a6ad 0%, var(--ios-neutral) 100%) !important;
+      box-shadow: 0 10px 20px rgba(142, 142, 147, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+    }
+
+    .clear-btn:active,
+    .btn-secondary:active,
+    button.secondary:active,
+    button[data-action="secondary"]:active {
+      background: linear-gradient(180deg, var(--ios-neutral) 0%, var(--ios-neutral-pressed) 100%) !important;
+    }
+
+    .danger,
+    .btn-danger,
+    button.danger,
+    button[data-action="danger"] {
+      background: linear-gradient(180deg, #ff453a 0%, var(--ios-red) 100%) !important;
+      box-shadow: 0 10px 20px rgba(255, 59, 48, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+    }
+
+    .danger:active,
+    .btn-danger:active,
+    button.danger:active,
+    button[data-action="danger"]:active {
+      background: linear-gradient(180deg, var(--ios-red) 0%, var(--ios-red-pressed) 100%) !important;
+    }
+
+    .btn-archive-save,
+    button.success,
+    button[data-action="success"] {
+      background: linear-gradient(180deg, #40d96a 0%, var(--ios-green) 100%) !important;
+      box-shadow: 0 10px 20px rgba(52, 199, 89, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+    }
+
+    .section,
+    .card,
+    .container,
+    .module-card,
+    .report-table,
+    .archive-list,
+    .info-grid,
+    .button-area,
+    .title-actions,
+    .toolbar {
+      transition: transform 0.22s var(--ios-ease), box-shadow 0.22s var(--ios-ease), border-color 0.22s var(--ios-ease), background 0.22s var(--ios-ease);
+    }
+
+    @media (max-width: 560px) {
+      h1 { font-size: 32px !important; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+      }
+    }
+
+    /* Einheitliche Aktionsfarben */
+    button,
+    .button,
+    a.button,
+    .pdf-btn,
+    .btn-primary {
+      background: #007aff !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(0, 122, 255, 0.22) !important;
+    }
+
+    button.archive-save,
+    button.archive-save-btn,
+    button.btn-archive-save {
+      background: #ff9500 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(255, 149, 0, 0.24) !important;
+    }
+
+    button.archive-open,
+    button.archive-open-btn,
+    button.archive-btn,
+    button.btn-archive,
+    button.pdf-btn,
+    button#pdfButton,
+    button#pdfBtn {
+      background: #007aff !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(0, 122, 255, 0.22) !important;
+    }
+
+    button.duplicate-btn {
+      background: #5856d6 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(88, 86, 214, 0.24) !important;
+    }
+
+    button.success,
+    button.add-btn,
+    button.btn-success,
+    button[data-action="success"],
+    button#addCo2PatroneBtn,
+    button#addDruckgaserzeugerBtn,
+    button#addOeffnungselementBtn {
+      background: #34c759 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(52, 199, 89, 0.24) !important;
+    }
+
+    button.danger,
+    button.remove-btn,
+    button.archive-delete-btn,
+    button.dynamic-remove,
+    button.btn-danger,
+    button[data-action="danger"] {
+      background: #ff3b30 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(255, 59, 48, 0.24) !important;
+    }
+
+    button.secondary,
+    button.clear-btn,
+    button.btn-secondary,
+    button[data-action="secondary"] {
+      background: #8e8e93 !important;
+      color: #ffffff !important;
+      box-shadow: 0 8px 18px rgba(142, 142, 147, 0.22) !important;
+    }
+
+    /* FSMobile unified button style */
+    :root {
+      --fsm-btn-blue: #007aff;
+      --fsm-btn-blue-top: #1688ff;
+      --fsm-btn-blue-pressed: #0062cc;
+      --fsm-btn-orange: #ff9500;
+      --fsm-btn-orange-top: #ffab32;
+      --fsm-btn-orange-pressed: #c76f00;
+      --fsm-btn-green: #34c759;
+      --fsm-btn-green-top: #40d96a;
+      --fsm-btn-green-pressed: #248a3d;
+      --fsm-btn-red: #ff3b30;
+      --fsm-btn-red-top: #ff453a;
+      --fsm-btn-red-pressed: #d70015;
+      --fsm-btn-gray: #8e8e93;
+      --fsm-btn-gray-top: #a6a6ad;
+      --fsm-btn-gray-pressed: #6e6e73;
+      --fsm-btn-purple: #5856d6;
+      --fsm-btn-purple-top: #6e6cff;
+      --fsm-btn-purple-pressed: #4240aa;
+      --fsm-btn-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    button,
+    .button,
+    a.button,
+    input[type="button"],
+    input[type="submit"],
+    .btn-primary,
+    .btn-archive,
+    .btn-archive-save,
+    .pdf-btn {
+      min-height: 46px !important;
+      padding: 12px 18px !important;
+      border: none !important;
+      border-radius: 999px !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      cursor: pointer !important;
+      color: #ffffff !important;
+      background: linear-gradient(180deg, var(--fsm-btn-blue-top) 0%, var(--fsm-btn-blue) 100%) !important;
+      box-shadow: 0 10px 20px rgba(0, 122, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Arial, sans-serif !important;
+      font-size: 15px !important;
+      font-weight: 800 !important;
+      line-height: 1.15 !important;
+      letter-spacing: 0 !important;
+      text-align: center !important;
+      text-decoration: none !important;
+      white-space: normal !important;
+      -webkit-tap-highlight-color: transparent !important;
+      transition: transform 0.18s var(--fsm-btn-ease), box-shadow 0.18s var(--fsm-btn-ease), background 0.18s var(--fsm-btn-ease), filter 0.18s var(--fsm-btn-ease) !important;
+    }
+
+    button:hover,
+    .button:hover,
+    a.button:hover,
+    input[type="button"]:hover,
+    input[type="submit"]:hover,
+    .btn-primary:hover,
+    .btn-archive:hover,
+    .btn-archive-save:hover,
+    .pdf-btn:hover {
+      filter: brightness(1.02) !important;
+      box-shadow: 0 12px 24px rgba(0, 122, 255, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.34) !important;
+    }
+
+    button:active,
+    .button:active,
+    a.button:active,
+    input[type="button"]:active,
+    input[type="submit"]:active,
+    .btn-primary:active,
+    .btn-archive:active,
+    .btn-archive-save:active,
+    .pdf-btn:active {
+      transform: scale(0.975) !important;
+      background: linear-gradient(180deg, var(--fsm-btn-blue) 0%, var(--fsm-btn-blue-pressed) 100%) !important;
+      box-shadow: 0 5px 12px rgba(0, 122, 255, 0.22), inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    button:focus-visible,
+    .button:focus-visible,
+    a.button:focus-visible,
+    input[type="button"]:focus-visible,
+    input[type="submit"]:focus-visible {
+      outline: 3px solid rgba(0, 122, 255, 0.28) !important;
+      outline-offset: 3px !important;
+    }
+
+    button:disabled,
+    .button:disabled,
+    input[type="button"]:disabled,
+    input[type="submit"]:disabled {
+      opacity: 0.55 !important;
+      cursor: default !important;
+      transform: none !important;
+      filter: none !important;
+    }
+
+    button.archive-save,
+    button.archive-save-btn,
+    button.btn-archive-save,
+    .btn-archive-save {
+      background: linear-gradient(180deg, var(--fsm-btn-orange-top) 0%, var(--fsm-btn-orange) 100%) !important;
+      box-shadow: 0 10px 20px rgba(255, 149, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    }
+
+    button.archive-save:active,
+    button.archive-save-btn:active,
+    button.btn-archive-save:active,
+    .btn-archive-save:active {
+      background: linear-gradient(180deg, var(--fsm-btn-orange) 0%, var(--fsm-btn-orange-pressed) 100%) !important;
+      box-shadow: 0 5px 12px rgba(255, 149, 0, 0.22), inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    button.archive-open,
+    button.archive-open-btn,
+    button.archive-btn,
+    button.btn-archive,
+    button.pdf-btn,
+    button#pdfButton,
+    button#pdfBtn,
+    .btn-archive,
+    .pdf-btn {
+      background: linear-gradient(180deg, var(--fsm-btn-blue-top) 0%, var(--fsm-btn-blue) 100%) !important;
+      box-shadow: 0 10px 20px rgba(0, 122, 255, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    }
+
+    button.success,
+    button.add-btn,
+    button.btn-success,
+    button[data-action="success"],
+    button#addCo2PatroneBtn,
+    button#addDruckgaserzeugerBtn,
+    button#addOeffnungselementBtn,
+    .btn-success {
+      background: linear-gradient(180deg, var(--fsm-btn-green-top) 0%, var(--fsm-btn-green) 100%) !important;
+      box-shadow: 0 10px 20px rgba(52, 199, 89, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    }
+
+    button.success:active,
+    button.add-btn:active,
+    button.btn-success:active,
+    button[data-action="success"]:active,
+    .btn-success:active {
+      background: linear-gradient(180deg, var(--fsm-btn-green) 0%, var(--fsm-btn-green-pressed) 100%) !important;
+      box-shadow: 0 5px 12px rgba(52, 199, 89, 0.22), inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    button.danger,
+    button.remove-btn,
+    button.archive-delete-btn,
+    button.dynamic-remove,
+    button.btn-danger,
+    button[data-action="danger"],
+    .btn-danger {
+      background: linear-gradient(180deg, var(--fsm-btn-red-top) 0%, var(--fsm-btn-red) 100%) !important;
+      box-shadow: 0 10px 20px rgba(255, 59, 48, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    }
+
+    button.danger:active,
+    button.remove-btn:active,
+    button.archive-delete-btn:active,
+    button.dynamic-remove:active,
+    button.btn-danger:active,
+    button[data-action="danger"]:active,
+    .btn-danger:active {
+      background: linear-gradient(180deg, var(--fsm-btn-red) 0%, var(--fsm-btn-red-pressed) 100%) !important;
+      box-shadow: 0 5px 12px rgba(255, 59, 48, 0.22), inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    button.secondary,
+    button.clear-btn,
+    button.btn-secondary,
+    button[data-action="secondary"],
+    .btn-secondary,
+    .clear-btn {
+      background: linear-gradient(180deg, var(--fsm-btn-gray-top) 0%, var(--fsm-btn-gray) 100%) !important;
+      box-shadow: 0 10px 20px rgba(142, 142, 147, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.30) !important;
+    }
+
+    button.secondary:active,
+    button.clear-btn:active,
+    button.btn-secondary:active,
+    button[data-action="secondary"]:active,
+    .btn-secondary:active,
+    .clear-btn:active {
+      background: linear-gradient(180deg, var(--fsm-btn-gray) 0%, var(--fsm-btn-gray-pressed) 100%) !important;
+      box-shadow: 0 5px 12px rgba(142, 142, 147, 0.20), inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    button.duplicate-btn {
+      background: linear-gradient(180deg, var(--fsm-btn-purple-top) 0%, var(--fsm-btn-purple) 100%) !important;
+      box-shadow: 0 10px 20px rgba(88, 86, 214, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    }
+
+    button.duplicate-btn:active {
+      background: linear-gradient(180deg, var(--fsm-btn-purple) 0%, var(--fsm-btn-purple-pressed) 100%) !important;
+      box-shadow: 0 5px 12px rgba(88, 86, 214, 0.22), inset 0 1px 2px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    /* FSMobile embedded report surface cleanup */
+    body {
+      padding: 0 !important;
+      background: transparent !important;
+    }
+
+    .container {
+      width: 100% !important;
+      max-width: none !important;
+      margin: 0 !important;
+      background: transparent !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .title-actions {
+      padding: 0 !important;
+      background: transparent !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    /* FSMobile iframe header action safe area */
+    .title-bar > .title-actions,
+    header > .title-actions,
+    header > .toolbar {
+      margin-right: calc(86px + env(safe-area-inset-right, 0px)) !important;
+    }
+
+    .title-bar > .title-actions,
+    header > .title-actions {
+      background: transparent !important;
+      border-color: transparent !important;
+      box-shadow: none !important;
+      -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    body.generating-pdf .title-bar > .title-actions,
+    body.generating-pdf header > .title-actions,
+    body.generating-pdf header > .toolbar,
+    .pdf-render-wrapper .title-bar > .title-actions,
+    .pdf-render-wrapper header > .title-actions,
+    .pdf-render-wrapper header > .toolbar {
+      margin-right: 0 !important;
+    }
+
+    @media (max-width: 720px) {
+      .title-bar > .title-actions,
+      header > .title-actions,
+      header > .toolbar {
+        margin-right: 0 !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -554,6 +1034,7 @@
           <col class="col-pos">
           <col class="col-standort">
           <col class="col-typ">
+          <col class="col-hersteller">
           <col class="col-baujahr">
           <col class="col-status">
           <col class="col-status">
@@ -569,6 +1050,7 @@
             <th class="col-pos">Pos.</th>
             <th class="col-standort">Standort</th>
             <th class="col-typ">Typ</th>
+            <th class="col-hersteller">Hersteller</th>
             <th class="col-baujahr">Baujahr</th>
             <th class="col-status">Außeninspektion</th>
             <th class="col-status">Innenkontrolle</th>
@@ -586,9 +1068,10 @@
 
     <div class="actions">
       <button type="button" onclick="addRow()" class="success">Neue Zeile</button>
+      <button type="button" onclick="duplicateLastRow()" class="duplicate-btn">Duplizieren</button>
       <button type="button" onclick="removeRow()" class="danger">Letzte Zeile löschen</button>
       <button type="button" onclick="clearForm()" class="secondary">Leeren</button>
-      <button type="button" onclick="exportPdf()">PDF</button>
+      <button type="button" class="pdf-btn" onclick="exportPdf()">PDF</button>
     </div>
 
     <div class="signature-block">
@@ -614,7 +1097,7 @@
 
   <script>
     const PDF_HEADERS = [
-      'Pos.', 'Standort', 'Typ', 'Baujahr', 'Außeninspektion', 'Innenkontrolle',
+      'Pos.', 'Standort', 'Typ', 'Hersteller', 'Baujahr', 'Außeninspektion', 'Innenkontrolle',
       'BetrSichV\nKategorie I-II', 'Schlauchprüfung', 'Reinigung', 'Druck-/Dichtheit',
       'Löschmittel\nTausch bis', 'Prüfplakette'
     ];
@@ -653,6 +1136,7 @@
         <td><input type="text" class="pos-field" readonly aria-label="Position"></td>
         <td><input type="text" class="standort-field" placeholder="Standort eingeben" autocomplete="off" aria-label="Standort"></td>
         <td><input type="text" class="type-field" autocomplete="off" aria-label="Typ"></td>
+        <td><input type="text" class="hersteller-field" autocomplete="off" aria-label="Hersteller"></td>
         <td><input type="text" class="baujahr-field" inputmode="numeric" autocomplete="off" aria-label="Baujahr"></td>
         <td></td>
         <td></td>
@@ -664,11 +1148,11 @@
         <td class="checkbox-center"><input type="checkbox" aria-label="Prüfplakette"></td>
       `;
 
-      row.cells[4].appendChild(createSelect(['I.O', 'n.i.O']));
-      row.cells[5].appendChild(createSelect(['I.O', 'n.i.O', 'n.n']));
-      row.cells[6].appendChild(createSelect(['I.O', 'n.i.O']));
-      row.cells[7].appendChild(createSelect(['I.O', 'n.i.O', 'n.n']));
-      row.cells[9].appendChild(createSelect(['I.O', 'n.i.O', 'n.n']));
+      row.cells[5].appendChild(createSelect(['I.O', 'n.i.O']));
+      row.cells[6].appendChild(createSelect(['I.O', 'n.i.O', 'n.n']));
+      row.cells[7].appendChild(createSelect(['I.O', 'n.i.O']));
+      row.cells[8].appendChild(createSelect(['I.O', 'n.i.O', 'n.n']));
+      row.cells[10].appendChild(createSelect(['I.O', 'n.i.O', 'n.n']));
 
       tableBody.appendChild(row);
       updatePositionNumbers();
@@ -680,6 +1164,19 @@
       if(tableBody.rows.length > 1){
         tableBody.deleteRow(tableBody.rows.length - 1);
       }
+      updatePositionNumbers();
+      scheduleStorageSave();
+    }
+
+    function duplicateLastRow(){
+      const tableBody = document.getElementById('tableBody');
+      const lastRow = tableBody.rows[tableBody.rows.length - 1];
+      if(!lastRow) return;
+
+      const values = Array.from(lastRow.cells).map(getCellValue);
+      addRow();
+      const newRow = tableBody.rows[tableBody.rows.length - 1];
+      Array.from(newRow.cells).forEach((cell, index) => setCellValue(cell, values[index]));
       updatePositionNumbers();
       scheduleStorageSave();
     }
@@ -808,8 +1305,9 @@
       rows.forEach(rowValues => {
         addRow();
         const row = tableBody.rows[tableBody.rows.length - 1];
+        const migratedRowValues = migrateRowValues(rowValues);
         Array.from(row.cells).forEach((cell, index) => {
-          setCellValue(cell, rowValues[index]);
+          setCellValue(cell, migratedRowValues[index]);
         });
       });
       updatePositionNumbers();
@@ -830,6 +1328,14 @@
       }
 
       applyStoragePayload(saved);
+    }
+
+    function migrateRowValues(rowValues){
+      const values = Array.isArray(rowValues) ? rowValues.slice() : [];
+      if(values.length === 12){
+        values.splice(3, 0, '');
+      }
+      return values;
     }
 
     function readStoredValue(key){
@@ -1066,7 +1572,7 @@
 
       return new Promise(resolve => {
         const script = document.createElement('script');
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+        script.src = '../../vendor/jspdf.umd.min.js';
         script.onload = () => resolve(ensureJsPdf());
         script.onerror = () => resolve(null);
         document.head.appendChild(script);
@@ -1116,7 +1622,7 @@
       try{
         const JsPDF = await loadJsPdfIfNeeded();
         if(!JsPDF){
-          alert('PDF-Bibliothek konnte nicht geladen werden. Bitte Internetverbindung prüfen und erneut versuchen.');
+          alert('PDF-Bibliothek konnte nicht geladen werden. Bitte Seite neu laden und erneut versuchen.');
           return;
         }
 
@@ -1134,7 +1640,7 @@
 
         // Breiten sind bewusst auf Lesbarkeit und sichtbare Eingaben optimiert.
         // Die Summe wird anschließend exakt auf die A4-Querformat-Seite skaliert.
-        const baseWidths = [11, 55, 20, 18, 25, 25, 27, 25, 19, 25, 27, 21];
+        const baseWidths = [10, 48, 18, 24, 17, 23, 23, 25, 23, 18, 23, 25, 20];
         const totalBaseWidth = baseWidths.reduce((sum, width) => sum + width, 0);
         const widths = baseWidths.map(width => width * usableWidth / totalBaseWidth);
         const tableX = margin;
@@ -1426,6 +1932,8 @@
     }
 
     function registerServiceWorker(){
+      if(window.self !== window.top) return;
+      if(window.FSMOBILE_EMBEDDED_MODULE) return;
       if(!('serviceWorker' in navigator)) return;
 
       let refreshing = false;
@@ -1435,7 +1943,7 @@
         window.location.reload();
       });
 
-      navigator.serviceWorker.register('./service-worker.js?v=2026.06.05-archive').then(registration => {
+      navigator.serviceWorker.register('./service-worker.js?v=2026.06.07-02').then(registration => {
         registration.update();
 
         registration.addEventListener('updatefound', () => {
