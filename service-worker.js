@@ -1,9 +1,9 @@
-const CACHE_VERSION = 'feuerloescher-v23-hersteller-2026-06-08';
+const CACHE_VERSION = 'feuerloescher-v24-pdf-export-2026-06-08';
 const APP_SHELL = [
   './',
   './index.html',
   './manifest.json',
-  '../../vendor/jspdf.umd.min.js'
+  './vendor/jspdf.umd.min.js'
 ];
 
 self.addEventListener('install', event => {
